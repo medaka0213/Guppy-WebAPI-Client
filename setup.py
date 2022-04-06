@@ -3,6 +3,6 @@ import vrw_web_client
 
 setup(
     name='vrw_web_client',
-    version='0.1',
+    version='0.1.3',
     packages=find_packages()
 )

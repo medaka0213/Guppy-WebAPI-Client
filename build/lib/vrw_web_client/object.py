@@ -7,18 +7,19 @@ class vrwObject:
         self.type = type
 
     def describe(self):
-        path = self.type + "/describe"
+        path = "/q/" + self.type + "/describe"
         return api.get(path).get("Item", {})
 
     def get_list(self):
-        return api.get(self.type).get("Items", [])
+        path = "/q/" + self.type
+        return api.get(path).get("Items", [])
         
     def get_by_id(self, id):
-        path = self.type +"/i/"+ id
+        path = "/q/" + self.type +"/i/"+ id
         return api.get(path).get("Item", {})
     
     def get_by_unique(self, value):
-        path = self.type +"/search/unique/" +  value
+        path = "/q/" + self.type +"/search/unique/" +  value
         res = api.get(path).get("Items", [])
         if len(res):
             return res[0]
@@ -26,7 +27,8 @@ class vrwObject:
             return {} 
 
     def put(self, submission, **kwargs):
-        res = api.post(self.type, {
+        path = "/q/" + self.type
+        res = api.post(path, {
             "submission": submission,
             **kwargs
         })
@@ -36,7 +38,8 @@ class vrwObject:
             return res
 
     def post(self, submission, **kwargs):
-        res = api.post(self.type, {
+        path = "/q/" + self.type
+        res = api.post(path, {
             "submission": submission,
             **kwargs
         })
@@ -49,7 +52,7 @@ class vrwObject:
         """
         submission: list
         """
-        path = self.type + "/batch"
+        path = "/q/" + self.type + "/batch"
         print("POST:", path)
         return api.post(path, {
             "submission": submission
@@ -59,14 +62,14 @@ class vrwObject:
         """
         submission: list
         """
-        path = self.type + "/batch"
+        path = "/q/" + self.type + "/batch"
         print("POST:", path)
         return api.put(path, {
             "submission": submission
         })
     
     def delete(self, id):
-        path = self.type +"/i/"+ id
+        path = "/q/" + self.type +"/i/"+ id
         return api.delete(path)
 
     # 関連アイテムを適用
@@ -78,7 +81,7 @@ class vrwObject:
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = self.type +"/i/" + item +  "/rel"
+        path = "/q/" + self.type +"/i/" + item +  "/rel"
         print("GET:", path)
         return api.get(path).get("Items", [])
 
@@ -89,7 +92,7 @@ class vrwObject:
         item: dict
         対象のアイテムにターゲットのアイテムを関連付ける
         """
-        path = self.type +"/i/" + item["pk"] +  "/rel"
+        path = "/q/" + self.type +"/i/" + item["pk"] +  "/rel"
         print("PUT:", path)
         return api.post(path, {
             "submission": {
@@ -104,7 +107,7 @@ class vrwObject:
         item: dict
         対象のアイテムからターゲットのアイテムの関連付けを削除
         """
-        path = self.type +"/i/" + item["pk"] +  "/rel"
+        path = "/q/" + self.type +"/i/" + item["pk"] +  "/rel"
         print("PUT:", path)
         return api.delete(path, {
             "submission": {
@@ -121,7 +124,7 @@ class vrwObject:
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = self.type +"/i/" + item +  "/ref"
+        path = "/q/" + self.type +"/i/" + item +  "/ref"
         print("GET:", path)
         return api.get(path).get("Items", [])
 
@@ -132,7 +135,7 @@ class vrwObject:
         item: dict
         targetの関連アイテムにitemを追加
         """
-        path = self.type +"/i/" + item["pk"] +  "/ref"
+        path = "/q/" + self.type +"/i/" + item["pk"] +  "/ref"
         print("PUT:", path)
         return api.post(path, {
             "submission": {
@@ -147,7 +150,7 @@ class vrwObject:
         item: dict
         targetの関連アイテムからitemを削除
         """
-        path = self.type +"/i/" + item["pk"] +  "/ref"
+        path = "/q/" + self.type +"/i/" + item["pk"] +  "/ref"
         print("PUT:", path)
         return api.delete(path, {
             "submission": {
