@@ -5,14 +5,17 @@ import urllib.request
 import urllib.parse as urlparse
 
 
-API_URL = "http://localhost:8000"
-
+API_URL = os.environ.get("VRW_WEB_API_URL", "http://localhost:8000")
+API_KEY = os.environ.get("VRW_WEB_API_KEY", "")
 
 def get(path, params={}):
     url = urlparse.urljoin(API_URL, path)
     print("GET:", url)
     req = urllib.request.Request(
-        '{}?{}'.format(url, urllib.parse.urlencode(params))
+        '{}?{}'.format(url, urllib.parse.urlencode(params)),
+        headers = {
+            "x-api-key": API_KEY
+        }
     )
     with urllib.request.urlopen(req) as res:
         body = json.load(res)
@@ -26,7 +29,8 @@ def post(path, body, params={}):
         json.dumps(body).encode(),
         method='POST',
         headers={
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "x-api-key": API_KEY
         }
     )
 
@@ -42,7 +46,8 @@ def put(path, body, params={}):
         json.dumps(body).encode(),
         method='PUT',
         headers={
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "x-api-key": API_KEY
         }
     )
 
@@ -56,7 +61,10 @@ def delete(path, params={}):
     print("DELETE:", url)
     req = urllib.request.Request(
         '{}?{}'.format(url, urllib.parse.urlencode(params)),
-        method='DELETE'
+        method='DELETE',
+        headers={
+            "x-api-key": API_KEY
+        }
     )
     with urllib.request.urlopen(req) as res:
         body = json.load(res)

@@ -1,48 +1,70 @@
 import vrw_web_client.api as api 
 
 import urllib.parse as urlparse
+import os
 
-class vrwObject:
+
+class vrwObject(object):
     def __init__(self, type):
         self.type = type
+        self.root_path = "/q/" + self.type
 
-    def describe(self):
-        path = "/q/" + self.type + "/describe"
-        return api.get(path).get("Item", {})
+    def set_url(self, path=""):
+        path = os.path.join(self.root_path, path)
+        path = path.replace("\\", "/")
+        return path
 
-    def get_list(self):
-        path = "/q/" + self.type
-        return api.get(path).get("Items", [])
-        
-    def get_by_id(self, id):
-        path = "/q/" + self.type +"/i/"+ id
+    def _get_item(self, path=""):
         return api.get(path).get("Item", {})
     
+    def _get_items_list(self, path=""):
+        path = self.set_url(path)
+        return api.get(path).get("Items", [])
+    
+    def _post(self, path="", submission={}):
+        path = self.set_url(path)
+        return api.post(path, {
+            "submission": submission
+        })
+    
+    def _put(self, path="", submission={}):
+        path = self.set_url(path)
+        return api.put(path, {
+            "submission": submission
+        })
+    
+    def _delete(self, path=""):
+        path = self.set_url(path)
+        return api.delete(path)
+
+
+    def describe(self):
+        return self._get_item("describe")
+
+    def get_list(self):
+        return self._get_items_list()
+
+    def get_by_id(self, id):
+        path = "/i/"+ id
+        return self._get_item(path)
+    
     def get_by_unique(self, value):
-        path = "/q/" + self.type +"/search/unique/" +  value
-        res = api.get(path).get("Items", [])
+        path = "/search/unique/" +  value
+        res = self._get_items_list(path)
         if len(res):
             return res[0]
         else:
             return {} 
 
     def put(self, submission, **kwargs):
-        path = "/q/" + self.type
-        res = api.post(path, {
-            "submission": submission,
-            **kwargs
-        })
+        res = self._put(submission=submission)
         if res.get("result"):
             return res.get("Item")
         else:
             return res
 
     def post(self, submission, **kwargs):
-        path = "/q/" + self.type
-        res = api.post(path, {
-            "submission": submission,
-            **kwargs
-        })
+        res = self._post(submission=submission)
         if res.get("result"):
             return res.get("Item")
         else:
@@ -52,25 +74,25 @@ class vrwObject:
         """
         submission: list
         """
-        path = "/q/" + self.type + "/batch"
-        print("POST:", path)
-        return api.post(path, {
-            "submission": submission
-        })
+        res = self._post("batch", submission=submission)
+        if res.get("result"):
+            return res.get("Item")
+        else:
+            return res
 
     def batch_put(self, submission):
         """
         submission: list
         """
-        path = "/q/" + self.type + "/batch"
-        print("POST:", path)
-        return api.put(path, {
-            "submission": submission
-        })
+        res = self._put("batch", submission=submission)
+        if res.get("result"):
+            return res.get("Item")
+        else:
+            return res
     
     def delete(self, id):
-        path = "/q/" + self.type +"/i/"+ id
-        return api.delete(path)
+        path = "/i/"+ id
+        return self._delete(path)
 
     # 関連アイテムを適用
     def get_rel_items(self, item):
@@ -81,9 +103,8 @@ class vrwObject:
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/q/" + self.type +"/i/" + item +  "/rel"
-        print("GET:", path)
-        return api.get(path).get("Items", [])
+        path = "/i/" + item +  "/rel"
+        return self._get_items_list(path)
 
     # 関連アイテムを適用
     def put_rel_item(self, target, item):
@@ -92,13 +113,11 @@ class vrwObject:
         item: dict
         対象のアイテムにターゲットのアイテムを関連付ける
         """
-        path = "/q/" + self.type +"/i/" + item["pk"] +  "/rel"
-        print("PUT:", path)
-        return api.post(path, {
-            "submission": {
-                "pk": target["pk"],
-            }
-        })
+        path = "/i/" + item["pk"] +  "/rel"
+        submission = {
+            "pk": target["pk"]
+        }
+        return self._put(path, submission=submission)
     
     # 関連アイテムを削除
     def delete_rel_item(self, target, item):
@@ -107,13 +126,11 @@ class vrwObject:
         item: dict
         対象のアイテムからターゲットのアイテムの関連付けを削除
         """
-        path = "/q/" + self.type +"/i/" + item["pk"] +  "/rel"
-        print("PUT:", path)
-        return api.delete(path, {
-            "submission": {
-                "pk": target["pk"],
-            }
-        })
+        path = "/i/" + item["pk"] +  "/rel"
+        submission = {
+            "pk": target["pk"]
+        }
+        return self._delete(path, submission=submission)
     
     # 参照アイテムをGEI
     def get_ref_items(self, item):
@@ -124,9 +141,8 @@ class vrwObject:
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/q/" + self.type +"/i/" + item +  "/ref"
-        print("GET:", path)
-        return api.get(path).get("Items", [])
+        path = "/i/" + item +  "/ref"
+        return self._get_items_list(path)
 
     # 参照アイテムを適用
     def put_ref_item(self, target, item):
@@ -135,13 +151,11 @@ class vrwObject:
         item: dict
         targetの関連アイテムにitemを追加
         """
-        path = "/q/" + self.type +"/i/" + item["pk"] +  "/ref"
-        print("PUT:", path)
-        return api.post(path, {
-            "submission": {
-                "pk": target["pk"],
-            }
-        })
+        path = "/i/" + item["pk"] +  "/ref"
+        submission = {
+            "pk": target["pk"]
+        }
+        return self._put(path, submission=submission)
     
     # 参照アイテムを削除
     def delete_ref_item(self, target, item):
@@ -150,30 +164,8 @@ class vrwObject:
         item: dict
         targetの関連アイテムからitemを削除
         """
-        path = "/q/" + self.type +"/i/" + item["pk"] +  "/ref"
-        print("PUT:", path)
-        return api.delete(path, {
-            "submission": {
-                "pk": target["pk"],
-            }
-        })
-
-class Launch(vrwObject):
-    def __init__(self):
-        super().__init__("launch")
-
-class Rocket(vrwObject):
-    def __init__(self):
-        super().__init__("rocket")
-
-class Image(vrwObject):
-    def __init__(self):
-        super().__init__("image")
-
-class Meetup(vrwObject):
-    def __init__(self):
-        super().__init__("meetup")
-
-class Slide(vrwObject):
-    def __init__(self):
-        super().__init__("slide")
+        path = "/i/" + item["pk"] +  "/ref"
+        submission = {
+            "pk": target["pk"]
+        }
+        return self._delete(path, submission=submission)

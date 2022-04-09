@@ -1,7 +1,6 @@
 import unittest
-from vrw_web_client import *
+from vrw_web_client import vrwObject
 import logging
-from tabulate import tabulate
 
 logging.basicConfig(level=logging.INFO)
 
@@ -9,9 +8,6 @@ class SampleTest(unittest.TestCase):
     def test(self):
         logging.info('test_get_rocket')
         
-        res = api.get("launch")
+        res = vrwObject("launch").get_list()
         logging.info(res)
-        data = res["Items"]
-
-        print(tabulate(data, headers='keys'))
         self.assertEqual(1, 1)
