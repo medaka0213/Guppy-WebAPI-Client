@@ -26,11 +26,13 @@ class vrwObject(object):
         return self
 
     def set_url(self, path=""):
-        path = os.path.join(self.root_path, path)
+        path = os.path.join(self.root_path, *path.split("/"))
         path = path.replace("\\", "/")
         return path
 
     def _get_item(self, path=""):
+        path = self.set_url(path)
+        print("path:", path)
         return api.get(path).get("Item", {})
     
     def _get_items_list(self, path=""):
@@ -61,8 +63,7 @@ class vrwObject(object):
         return self._get_items_list()
 
     def get_by_id(self, id):
-        path = "/i/"+ id
-        return self._get_item(path)
+        return self._get_item("/i/"+ id)
     
     def get_by_unique(self, value):
         path = "/search/unique/" +  value

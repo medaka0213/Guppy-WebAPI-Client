@@ -9,9 +9,9 @@ class SampleTest(unittest.TestCase):
         logging.info('test_get_rocket')
         
         res = vrwObject("launch").filter(
-            "datetime", "2024-01-01", QueryType.GT_E
+            "datetime", "2024-01-01", "GREATER_THAN_OR_EQUAL"
         ).filter(
-            "datetime_date_type", "CONFIRMED", QueryType.EQ
+            "datetime_date_type", "CONFIRMED", "EQUAL"
         ).get_list()
         logging.info(res)
         self.assertEqual(1, 1)
