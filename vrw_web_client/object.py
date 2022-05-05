@@ -3,11 +3,27 @@ import vrw_web_client.api as api
 import urllib.parse as urlparse
 import os
 
+from .params import QueryType
 
 class vrwObject(object):
     def __init__(self, type):
         self.type = type
         self.root_path = "/q/" + self.type
+        self.filter_params = {}
+
+    # 検索用のフィルター追加
+    def filter(self, key, value, mode):
+        """
+        kwargs: dict
+        検索条件を指定して検索
+        """
+        self.filter_params.update({
+            key: {
+                "value": value,
+                "mode": mode
+            }
+        }) 
+        return self
 
     def set_url(self, path=""):
         path = os.path.join(self.root_path, path)
@@ -19,7 +35,7 @@ class vrwObject(object):
     
     def _get_items_list(self, path=""):
         path = self.set_url(path)
-        return api.get(path).get("Items", [])
+        return api.get(path, self.filter_params).get("Items", [])
     
     def _post(self, path="", submission={}):
         path = self.set_url(path)
@@ -169,3 +185,4 @@ class vrwObject(object):
             "pk": target["pk"]
         }
         return self._delete(path, submission=submission)
+

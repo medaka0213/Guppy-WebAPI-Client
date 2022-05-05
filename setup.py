@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-import vrw_web_client
+import vrw_web_client, QueryType
 
 setup(
     name='vrw_web_client',
