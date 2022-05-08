@@ -17,7 +17,7 @@ class QueryType(Enum):
     EX = "EXISTS"
     N_EX = "NOT_EXISTS"
 
-def generate_query_value(value, mode):
+def generate_query_value(value, mode=QueryType.EQ):
     # データの処理
     if isinstance(value, str):
         value= "\"" + str(value) + "\""

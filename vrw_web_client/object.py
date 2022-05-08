@@ -45,10 +45,14 @@ class vrwObject(object):
             "submission": submission
         })
     
-    def _put(self, path="", submission={}):
+    def _put(self, path="", submission={}, overwrite=False):
         path = self.set_url(path)
         return api.put(path, {
             "submission": submission
+        }, params = {
+            "overwrite": {
+                "value": overwrite,
+            }
         })
     
     def _delete(self, path=""):
@@ -73,14 +77,14 @@ class vrwObject(object):
         else:
             return {} 
 
-    def put(self, submission, **kwargs):
-        res = self._put(submission=submission)
+    def put(self, submission, overwrite=False):
+        res = self._put(submission=submission, overwrite=overwrite)
         if res.get("result"):
             return res.get("Item")
         else:
             return res
 
-    def post(self, submission, **kwargs):
+    def post(self, submission):
         res = self._post(submission=submission)
         if res.get("result"):
             return res.get("Item")
@@ -97,11 +101,11 @@ class vrwObject(object):
         else:
             return res
 
-    def batch_put(self, submission):
+    def batch_put(self, submission, overwrite=False):
         """
         submission: list
         """
-        res = self._put("batch", submission=submission)
+        res = self._put("batch", submission=submission, overwrite=overwrite)
         if res.get("result"):
             return res.get("Item")
         else:

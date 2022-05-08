@@ -57,6 +57,8 @@ def put(path, body, params={}):
     url = _set_url(path)
     print("PUT:", url)
 
+    print(params)
+
     params = {
         k: generate_query_value(**v) for k, v in params.items()
     }
