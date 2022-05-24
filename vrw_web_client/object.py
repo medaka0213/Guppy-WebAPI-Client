@@ -140,6 +140,19 @@ class vrwObject(object):
         }
         return self._put(path, submission=submission)
     
+    # 関連アイテムを適用
+    def post_rel_item(self, target, item):
+        """
+        target: dict
+        item: dict
+        対象のアイテムにターゲットのアイテムを関連付ける
+        """
+        path = "/i/" + item["pk"] +  "/rel"
+        submission = {
+            "pk": target["pk"]
+        }
+        return self._post(path, submission=submission)
+
     # 関連アイテムを削除
     def delete_rel_item(self, target, item):
         """
@@ -164,6 +177,19 @@ class vrwObject(object):
 
         path = "/i/" + item +  "/ref"
         return self._get_items_list(path)
+
+    # 参照アイテムを適用
+    def post_ref_item(self, target, item):
+        """
+        target: dict
+        item: dict
+        targetの関連アイテムにitemを追加
+        """
+        path = "/i/" + item["pk"] +  "/ref"
+        submission = {
+            "pk": target["pk"]
+        }
+        return self._post(path, submission=submission)
 
     # 参照アイテムを適用
     def put_ref_item(self, target, item):
