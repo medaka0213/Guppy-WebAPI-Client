@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from .params import generate_query_value
 
-API_URL_PROD = "https://tpo6a8xtkk.execute-api.ap-northeast-1.amazonaws.com/api"
+API_URL_PROD = "https://api.virtualrocketwatching.net/v0"
 API_URL_DEV = "http://localhost:8000"
 
 API_URL = os.environ.get("VRW_WEB_API_URL", API_URL_PROD)
