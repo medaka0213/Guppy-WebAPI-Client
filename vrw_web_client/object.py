@@ -116,7 +116,7 @@ class vrwObject(object):
         return self._delete(path)
 
     # 関連アイテムを適用
-    def get_rel_items(self, item):
+    def get_rel_items(self, item, prefix=""):
         """
         target: dict or str
         対象のアイテムに関連しているアイテムを取得
@@ -124,7 +124,7 @@ class vrwObject(object):
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/i/" + item +  "/rel"
+        path = "/i/" + item +  "/rel" + prefix
         return self._get_items_list(path)
 
     # 関連アイテムを適用
@@ -167,7 +167,7 @@ class vrwObject(object):
         return self._delete(path, submission=submission)
     
     # 参照アイテムをGEI
-    def get_ref_items(self, item):
+    def get_ref_items(self, item, prefix=""):
         """
         item: dict or str
         対象のアイテムを参照しているアイテムを取得
@@ -175,7 +175,7 @@ class vrwObject(object):
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/i/" + item +  "/ref"
+        path = "/i/" + item +  "/ref/" + prefix
         return self._get_items_list(path)
 
     # 参照アイテムを適用
