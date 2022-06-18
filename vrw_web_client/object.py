@@ -123,9 +123,7 @@ class vrwObject(object):
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/i/" + item +  "/rel"
-        if prefix:
-            path = path + "/" + prefix
+        path = "/i/" + item +  "/rel/" + prefix
         return self._get_items_list(path)
 
     # 関連アイテムを適用
