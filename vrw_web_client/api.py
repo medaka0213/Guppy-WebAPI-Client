@@ -25,10 +25,11 @@ def get(path, params={}):
     params = {
         k: generate_query_value(**v) for k, v in params.items()
     }
-    print(params)
+    url = '{}?{}'.format(url, urlencode(params))
+    print(url)
 
     res = requests.get(
-        '{}?{}'.format(url, urlencode(params)),
+        url,
         headers = {
             "x-api-key": API_KEY
         }

@@ -32,7 +32,6 @@ class vrwObject(object):
 
     def _get_item(self, path=""):
         path = self.set_url(path)
-        print("path:", path)
         return api.get(path).get("Item", {})
     
     def _get_items_list(self, path=""):
@@ -124,7 +123,9 @@ class vrwObject(object):
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/i/" + item +  "/rel" + prefix
+        path = "/i/" + item +  "/rel"
+        if prefix:
+            path = path + "/" + prefix
         return self._get_items_list(path)
 
     # 関連アイテムを適用
@@ -175,7 +176,9 @@ class vrwObject(object):
         if isinstance(item, dict):
             item = item["pk"]
 
-        path = "/i/" + item +  "/ref/" + prefix
+        path = "/i/" + item +  "/ref"
+        if prefix:
+            path = path + "/" + prefix
         return self._get_items_list(path)
 
     # 参照アイテムを適用
