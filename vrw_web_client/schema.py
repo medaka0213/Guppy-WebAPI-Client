@@ -40,6 +40,9 @@ class event(DatetimeBaseModel):
     overview: str = ""
     overview_JP: str = None
 
+    calendar: str = ""
+    calendar_JP: str = ""
+
     watch_URL: str = None
     watch_URL_liftoff_at: int = None
     watch_URL_short: str = None
